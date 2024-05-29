@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <title>Login</title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <main class="py-8 px-20">
+      <div class="row">
+        <div class="mb-8">
+          <a class="flex justify-center bg-slate-950 rounded-xl py-2 px-3 text-white w-[190px]" href="/auth/google">
+            <img class="mr-2" src="https://img.icons8.com/color/16/000000/google-logo.png" width="24" height="24"/>
+            透過Google登入
+          </a>
+        </div>
+      </div>
+      <hr />
+      <h5 class="my-8">已經註冊過一個帳戶？您可以在此登錄：</h5>
+      <form action="/auth/login" method="POST">
+        <%- include ("partials/message") %>
+        <div class="form-group">
+          <label for="exampleInputEmail1">信箱地址：</label>
+          <input
+            type="email"
+            class="form-control"
+            id="exampleInputEmail1"
+            aria-describedby="emailHelp"
+            name="username"
+          />
+          <small id="emailHelp" class="form-text text-muted"
+            >我們不會與其他人分享你的信箱。</small
+          >
+        </div>
+        <br />
+        <div class="form-group">
+          <label for="exampleInputPassword1">密碼：</label>
+          <input
+            type="password"
+            class="form-control"
+            id="exampleInputPassword1"
+            name="password"
+          />
+        </div>
+        <br />
+        <button class="bg-orange-600 px-5 py-2 text-white rounded-lg">會員登入</button>
+      </form>
+    </main>
+  </body>
+</html>

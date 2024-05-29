@@ -1,0 +1,75 @@
+<div class="fixed h-full w-full top-0 left-0" id="modal">
+  <div class="absolute h-full w-full bg-gray-900 opacity-60 cancel"></div>
+  <div
+    class="absolute w-[300px] left-1/2 top-1/2 -ml-[150px] -mt-[75px] bg-white p-5 rounded-lg h-[150px] flex flex-col justify-between p-5 pb-6 drop-shadow-md"
+  >
+    <h4 class="text-lg font-bold pb-3 text-center border-b border-neutral-200">
+      確定要上架嗎？
+    </h4>
+    <div class="flex gap-3 justify-center">
+      <form
+        method="POST"
+      >
+        <button
+          class="bg-teal-600 text-white px-5 py-2 font-bold rounded-full confirm"
+        >
+          確定
+        </button>
+      </form>
+      <button
+        class="border border-neutral-500 text-neutral-500 font-bold px-5 py-2 rounded-full cancel"
+      >
+        取消
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.querySelector("#modal");
+  const cancelBlocks = document.querySelectorAll(".cancel");
+  const onShelfBtns = document.querySelectorAll(".on-shelf");
+  const offShelfBtns = document.querySelectorAll(".off-shelf");
+  const confirmBtn = modal.querySelector(".confirm");
+  const form = modal.querySelector("form");
+  
+
+  modal.style.display = "none";
+
+  //上架作品
+  onShelfBtns.forEach((onShelfBtn) => {
+    onShelfBtn.addEventListener("click", function () {
+      const id = onShelfBtn.dataset.id;
+      form.setAttribute("action",`/api/story/${id}/changeshelf?_method=PATCH`);
+     
+      modal.querySelector("h4").innerText = "確定要上架嗎？";
+      modal.style.display = "block";
+
+      confirmBtn.addEventListener("click", function (e) {
+        modal.style.display = "none";
+      });
+    });
+  });
+
+  //下架作品
+  offShelfBtns.forEach((offShelfBtn) => {
+    offShelfBtn.addEventListener("click", function (e) {
+      const id = e.target.dataset.id;
+      form.setAttribute("action",`/api/story/${id}/changeshelf?_method=PATCH`);
+      
+      modal.querySelector("h4").innerText = "確定要下架嗎？";
+      modal.style.display = "block";
+
+      confirmBtn.addEventListener("click", function (e) {
+        modal.style.display = "none";
+      });
+    });
+  });
+
+  //點選overlay或取消按鈕關閉modal
+  cancelBlocks.forEach((cancelBlock) => {
+    cancelBlock.addEventListener("click", function () {
+      modal.style.display = "none";
+    });
+  });
+</script>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include ("partials/header") %>
+    <title>故事｜<%= foundStory.title %></title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <section class="px-20 py-10 flex flex-col justify-center">
+      <h1 class="text-3xl font-bold mb-5"><%= foundStory.title %></h1>
+
+      <div class="flex gap-5">
+        <img
+          id="storyimg"
+          src="/<%=foundStory.author._id%>/<%=foundStory.cover%>"
+          alt="作品封面"
+           class="w-[150px] h-[150px] object-cover rounded-lg"
+        />           
+      </div>
+      <p>閱覽數<%=foundStory.views%></p>
+   
+
+     <div class="py-10 flex flex-col ">
+          <% if(foundChapters.length >0){%>
+          <div class="flex items-center justify-between mb-5">
+            <p>共<%= foundChapters.length %>篇章節</p>
+          </div>
+          
+          <% foundChapters.forEach((foundChapter,index)=>{%>
+            <div class="flex items-center justify-between border w-[600px] py-2 px-3">
+                <a class="flex items-center gap-5" href="/story/<%=foundStory.type%>-<%=foundStory.number%>/<%=foundChapter.episode%>">
+                  <span>第<%= foundChapter.episode%>話</span>
+                  <img src="/<%= foundStory.author._id%>/<%= foundChapter.cover%>" class="w-[80px] h-[80px] object-cover">
+                  <h3 class="text-xl font-bold"><%= foundChapter.title%></h3>
+                </a>
+                <div class="flex items-center gap-3">
+                  <p><%= foundChapter.lovers.length%></p>
+                  
+                  <% const isLoved = user.loveChapters.includes(foundChapter._id); %>
+                  <form action="/story/<%=foundStory._id%>/<%=foundChapter.episode%>/love?_method=PATCH" method="POST">
+                    <input type="hidden" name="love" value="<%= isLoved %>">
+                    <button class=" <%= isLoved ? 'bg-orange-600' : 'bg-rose-600' %> px-4 py-2 text-white rounded-lg text-sm">
+                      <%= isLoved ? '已讚!' : '讚!' %>
+                    </button>
+                  </form>
+                  
+                </div>
+            </div>
+          <%})%>
+         
+          <%}else{%>
+          <p class="text-gray-500 mb-5">目前沒有任何章節T^T</p>
+          <%}%>
+        </div>
+      </div>
+    </section>
+
+   
+  </body>
+</html>

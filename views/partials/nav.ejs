@@ -1,0 +1,43 @@
+<nav class="bg-slate-950 text-white p-5">
+  <div class="flex items-center justify-between">
+    <div class="flex gap-5">
+    <a class="mr-20 text-2xl" href="/">作品登入系統</a>
+      <ul class="flex gap-5 items-center">       
+        <% if(!user) {%>               
+        <li>
+          <a  href="#">最新作品</a>
+        </li>
+        <li>
+          <a  href="#">人氣作品</a>
+        </li>
+        <% } %>
+        <% if(user) {%>         
+        <li>
+          <a  href="/profile">個人檔案</a>
+        </li>
+        <li>
+          <a  href="/story">作品管理</a>
+        </li>
+        <% } %>
+        <% if(user && (user.role === '站長' || user.role === '管理員')) {%>
+        <li>
+          <a  href="/member">會員管理</a>
+        </li>
+        <% } %>
+      </ul>
+    </div>
+   
+    <div class="flex gap-5">
+      <% if(!user) {%> 
+        <a  href="/auth/login" class="flex gap-1 items-center text-sm"><i class="uil uil-signin text-2xl"></i>登入</a>
+        <a  href="/auth/signup" class="flex gap-1 items-center text-sm"><i class="uil uil-user-plus text-2xl"></i></i>註冊</a>
+      <% } %>
+      <% if(user) {%>
+      <a href="/story/new"  class="flex gap-1 items-center text-sm"><i class="uil uil-create-dashboard text-2xl"></i>投稿</a>
+      <a href="/auth/logout" class="flex gap-1 items-center text-sm"><i class="uil uil-signout text-2xl"></i>登出</a>
+      <% } %>
+    </div>
+   
+   
+  </div>
+</nav>

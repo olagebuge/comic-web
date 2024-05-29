@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include ("partials/header") %>
+    <title>故事管理｜<%= foundStory.title %></title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <section class="px-20 py-10 flex flex-col justify-center">
+      <h1 class="text-3xl font-bold mb-5">故事管理</h1>
+      <div class="flex gap-5">
+        <form
+          action="/story/<%=foundStory.type%>-<%=foundStory.number%>/edit?_method=PATCH"
+          method="POST"
+          class="flex flex-col gap-3 w-[280px]"
+          enctype="multipart/form-data"
+        >
+          <div>
+            <img
+              id="storyimg"
+              src="/<%=user._id%>/<%=foundStory.cover%>"
+              alt="作品封面"
+              class="w-[150px] h-[150px] object-cover rounded-lg"
+            />
+            <input
+              id="story-cover"
+              name="cover"
+              type="file"
+              accept=".jpg, .jpeg, .png"
+              class="border-2 p-2"
+              style="display: none"
+            />
+            <label
+              for="story-cover"
+              class="font-bold mr-2 rounded-lg bg-black py-2 px-5 text-white cursor-pointer"
+              >更改封面</label
+            >
+          </div>
+          <div>
+            <label for="story-title" class="font-bold mr-2">標題</label>
+            <input
+              id="story-title"
+              name="title"
+              type="text"
+              value="<%= foundStory.title %>"
+              class="border-2 p-2 rounded-lg"
+            />
+          </div>
+          <div class="flex items-center">
+            <label for="story-content" class="font-bold mr-2">敘述</label>
+            <textarea
+              id="story-content"
+              name="content"
+              class="border-2 leading-8 order-slate-400 rounded-lg p-2"
+            >
+<%= foundStory.content %></textarea
+            >
+          </div>
+          <div class="flex">
+            <label for="show-type" class="text-right">展示類型：</label>
+            <select name="type" id="show-type">
+              <option value="book" <% if(foundStory.type === 'book') { %>selected<% } %>>由左到右</option>
+              <option value="mobile" <% if(foundStory.type === 'mobile') { %>selected<% } %>>由上到下</option>
+              <option value="painting" <% if(foundStory.type === 'painting') { %>selected<% } %>>插圖</option>
+            </select>
+          </div>
+          <button  class="font-bold mr-2 rounded-lg bg-black py-2 px-5 text-white cursor-pointer">確認更改</button>
+        </form>
+
+        <div class="px-20 py-10 flex flex-col ">
+          <% if(foundChapters.length >0){%>
+          <div class="flex items-center justify-between mb-5">
+            <p>共<%= foundChapters.length %>篇章節</p>
+            <a
+              href="/story/<%=foundStory.type%>-<%=foundStory.number%>/newchapter"
+              class="bg-black text-white w-[150px] py-2 px-5 text-center"
+              >＋新增章節</a
+            >
+
+          </div>
+          
+          <% foundChapters.forEach((foundChapter,index)=>{%>
+            <div class="flex items-center justify-between border w-[450px] py-2 px-3">
+                <a class="flex items-center gap-5" href="/story/<%=foundStory.type%>-<%=foundStory.number%>/<%=foundChapter.episode%>/edit">
+                  <span>第<%= foundChapter.episode%>話</span>
+                  <img src="/<%= foundStory.author._id%>/<%= foundChapter.cover%>" class="w-[80px] h-[80px] object-cover">
+                  <h3 class="text-xl font-bold"><%= foundChapter.title%></h3>
+                </a>  
+               
+                <div class="flex gap-3 text-sm">
+                  <a href="/story/<%=foundStory.type%>-<%=foundStory.number%>/<%=foundChapter.episode%>" class="bg-black py-1 px-3 rounded-lg text-white">預覽</a>       
+                  <form action="/story/<%=foundStory.type%>-<%=foundStory.number%>/<%= foundChapter.episode%>?_method=DELETE" method="POST">
+                    <input type="hidden" name="itemId" value="<%= foundChapter.episode%>">
+                    <button class="bg-orange-600 py-1 px-3 rounded-lg text-white">刪除</button>
+                  </form>
+                </div>      
+              
+            </div>
+          <%})%>
+         
+          <%}else{%>
+          <p class="text-gray-500 mb-5">目前沒有任何章節T^T</p>
+          <a
+            href="/story/<%=foundStory.type%>-<%=foundStory.number%>/newchapter"
+            class="bg-black text-white w-[150px] py-2 px-5 text-center"
+            >＋新增章節</a
+          >
+          <%}%>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const storyimg = document.querySelector("#storyimg");
+      const fileInput = document.querySelector("#story-cover");
+
+      fileInput.addEventListener("change", function (e) {
+        const file = e.target.files[0];
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            storyimg.setAttribute("src", e.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    </script>
+  </body>
+</html>

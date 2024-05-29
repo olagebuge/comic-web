@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <title>#<%=theChapter.episode%> <%=theChapter.title%>｜<%=foundStory.title%>｜編輯章節</title>
+    <link rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.8/css/line.css"
+    />
+
+    <style>
+      .sortable-list {
+        list-style: none;
+        background: #fff;
+        border:1px solid #a1a1a1;
+        width: 500px;
+        border-radius: 10px;
+        padding: 38px 32px 25px;       
+      }
+      .sortable-list .item {
+        border: 1px solid #ddd;
+        display: flex;
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 11px;
+        align-items: center;
+        padding: 10px 5px;
+        justify-content: space-between;
+      }
+      .item .details {
+        display: flex;
+        align-items: center;
+      }
+      .item .details img {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 20px;
+      }
+
+      .item .details span {
+        font-size: 18px;
+      }
+
+      .item i {
+        font-size: 24px;
+        color: rgb(114, 114, 114);
+      }
+      .item i:hover {
+        background: #e7e7e7;
+        border-radius: 5px;
+      }
+
+      /* :where()可以快速組合,
+選擇所有.item.dragging底下的.details及i元素 */
+      .item.dragging :where(.details, i) {
+        opacity: 0;
+      }
+
+    </style>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <main class="flex flex-col gap-5 items-center py-5">
+      <p>故事：<%=foundStory.title%></p>
+      <h1 class="text-3xl font-bold">第<%=theChapter.episode%>話｜<%=theChapter.title%>｜編輯章節</h1>
+      <form
+        action="/story/<%= foundStory.type %>-<%= foundStory.number %>/<%=theChapter.episode%>/edit?_method=PATCH"
+        method="POST"
+        class="flex flex-col gap-3 items-center"
+        enctype="multipart/form-data"
+      >
+        <%- include ("partials/message") %>
+        <div class="flex items-center justify-center w-[800px]">
+          <label for="title" class="text-right">標題：</label>
+          <input
+            name="title"
+            type="text"
+            id="title"
+            value="<%=theChapter.title%>"
+            class="border-2 leading-8 order-slate-400 rounded-lg w-2/4"
+          />
+        </div>
+        <!-- 上傳封面圖片 -->
+        <div class="flex gap-3 flex-col">
+          <input
+            type="file"
+            name="cover"
+            id="cover"
+            accept=".jpg, .jpeg, .png"
+            style="display: none"
+          />   
+          <div class="relative w-[600px] h-[300px] overflow-hidden rounded-lg">
+            <img id="cover-container" src="/<%=foundStory.author.toString()%>/<%=theChapter.cover%>" class="object-cover absolute"/>
+            <label              
+              for="cover"
+              class="rounded-lg bg-black text-white py-3 text-center w-[130px] block absolute bottom-2 right-2 cursor-pointer"
+              >變更章節封面</label>
+          </div> 
+         
+         
+        </div>
+
+        <!-- 上傳多張內容圖片 -->
+        <div class="mt-3">
+          <div class="flex justify-between items-center">
+            <label
+            for="pageInput"
+            class="flex bg-black text-white py-2 px-5 justify-center items-center cursor-pointer rounded-lg w-[120px]"
+            >新增圖片</label
+          >
+          <p>頁數 <span class="pageCount"><%=theChapter.content.length%></span></p>
+
+          </div>         
+          <input
+            name="content"
+            type="file"
+            id="pageInput"
+            accept=".jpg, .jpeg, .png"
+            class="border-2 leading-8 order-slate-400 rounded-lg w-2/4 hidden"
+            multiple
+          />
+
+          <ul class="sortable-list mt-3 flex flex-wrap gap-3">
+            <% if(theChapter.content.length>0){%>
+              <% theChapter.content.forEach((page,i)=>{%>                
+              <li class="item" draggable="true">
+                <div class="details  overflow-hidden">
+                  <span class="mr-1" onclick="delImage(<%= i %>)">&times;</span>
+                  <span class="mr-1.5"><%= i+1 %></span>                
+                  <img src="/<%=foundStory.author.toString()%>/<%= page.imageUrl%>" alt="<%= page.alt%>"/>
+                  <span class="img-name"><%= page.alt%></span>
+                </div>
+                <i class="uil uil-draggabledots"></i>
+              </li>
+              <%})%>
+            <%}else{%>
+              <p>還沒上傳任何圖片</p>
+            <%}%>
+          </ul>
+          
+        </div>
+
+        <button
+          type="submit"
+          class="bg-orange-600 py-2 px-5 rounded-lg text-white w-[300px] font-bold"
+        >
+          確認修改
+        </button>
+      </form>
+    </main>
+
+    <% let showphotos = JSON.stringify(theChapter.showphotos) %>
+    <% let showtitle = JSON.stringify(theChapter.title) %>
+    
+    
+    <script>
+      const pageInput = document.getElementById("pageInput"); 
+      const sortableList = document.querySelector(".sortable-list");
+      let coverContainer = document.getElementById("cover-container");     
+      const showphotos = <%- showphotos %>; 
+      const showtitle = <%- showtitle %>;
+      let allFiles = [...document.querySelectorAll(".item")];
+      bindDragEvents();
+      
+      //刪除圖片
+      const delImage = (index) => {
+        allFiles.splice(index, 1);
+        showImages();        
+      }; 
+
+      const showImages = () => {
+        let images = "";
+        allFiles.forEach((e, i) => {
+          let src = e.querySelector('img').getAttribute("src");
+          images += `
+          <div class="item" draggable="true">
+            <div class="details  overflow-hidden">
+              <span onclick="delImage(${i})">&times;</span>
+              <img src=${src} alt="${e.getAttribute("alt")}" class="smallimg"/>
+              <span class="img-name">${e.getAttribute("alt")}</span>
+            </div>
+            <i class="uil uil-draggabledots"></i>
+          </div>`;
+        });
+        sortableList.innerHTML = images;
+      }
+
+      function bindDragEvents() {
+        allFiles.forEach((item) => {
+          let alt = item.querySelector("img").getAttribute("alt");   
+          item.setAttribute("alt",alt); 
+
+          item.addEventListener("dragstart", () => {
+            //稍微延遲附加dragging樣式 , 讓抓起來的內容物不會消失
+            setTimeout(() => item.classList.add("dragging"), 0);
+          });
+
+          item.addEventListener("dragend", () => {
+            item.classList.remove("dragging"); 
+
+              const items = [...sortableList.querySelectorAll(".item")];
+              const updatedFiles = [...items].map(updatedItem => {                
+                const fileName = updatedItem.querySelector(".img-name").textContent;
+                console.log(updatedItem)
+                return allFiles.find((file) => file.getAttribute("alt") === fileName);                
+              });
+             
+              allFiles = updatedFiles;
+              console.log(allFiles);//替換後
+          });
+          
+        });
+      }
+
+        const initSortableList = (e) => {
+        e.preventDefault();
+        const draggingItem = sortableList.querySelector(".dragging");
+        const siblings = [
+          ...sortableList.querySelectorAll(".item:not(.dragging)"),
+        ];
+        // 找到拖動項目新的位置
+        let nextSibling = siblings.find((sibling) => {
+          return e.clientY <= sibling.offsetTop + sibling.offsetHeight / 2;
+        });
+        // 在 DOM 中移動拖動項目到新位置
+        sortableList.insertBefore(draggingItem, nextSibling); 
+      };
+
+      sortableList.addEventListener("dragover", initSortableList);
+      sortableList.addEventListener("dragenter", (e) => e.preventDefault());
+
+      //先上傳圖片至資料庫
+      pageInput.addEventListener("change", () => {       
+        const files = pageInput.files;       
+        let addFiles = [];
+
+        for (let i = 0; i < files.length; i++) {
+          if (addFiles.every((e) => e.name != files[i].name)) addFiles.push(files[i]); //防止選到同名檔案上傳
+        }
+        
+        const formData = new FormData();
+        addFiles.forEach((file) => {
+          formData.append("content", file);
+          formData.append('alt', file.name);          
+        });
+
+        fetch("/story/<%= foundStory.type %>-<%= foundStory.number %>/<%= theChapter.episode %>/photos?_method=PATCH",{
+          method:"POST",
+          body: formData,
+        })
+        .then((res)=>{                  
+          return res.json()
+        }).then((data) => {
+          console.log("前端-圖片上傳成功!");  
+          updateSortableList(data.updatedChapter.content)
+          allFiles = [...document.querySelectorAll(".item")];
+          bindDragEvents();          
+        })
+        .catch((e)=>{console.log(e)})
+      });
+      
+      function updateSortableList(photos) {
+        let pageCount = photos.length ;
+        document.querySelector('.pageCount').textContent = pageCount ; 
+
+        let images = "";
+        photos.forEach((photo, i) => {         
+          images += `
+          <div class="item" draggable="true">
+            <div class="details  overflow-hidden">
+              <span onclick="delImage(${i})">&times;</span>
+              <img src="/<%=foundStory.author.toString()%>/${photo.imageUrl}" alt="${photo.alt}" class="smallimg"/>
+              <span class="img-name">${photo.alt}</span>
+            </div>
+            <i class="uil uil-draggabledots"></i>
+          </div>`;
+        });
+        sortableList.innerHTML = images;
+      }
+      
+      //章節封面更改            
+      const coverInput = document.querySelector("#cover");
+      coverInput.addEventListener("change", function () {
+        let updateCover = coverInput.files[0]; 
+       
+        if (updateCover) {          
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            coverContainer.setAttribute("src", e.target.result);
+          };
+          reader.readAsDataURL(updateCover);                  
+          }
+      }); 
+
+      let formSubmitted = false;
+      //送出表單最終結果
+      const form = document.querySelector("form");
+        form.addEventListener('submit', (e) => {
+        formSubmitted = true; 
+        e.preventDefault(); 
+
+        // 上傳新選擇的封面圖片
+        const formData = new FormData(); 
+        
+        if(coverInput.files[0]) {
+          formData.append('cover', coverInput.files[0]);
+        }
+        
+        const photos = allFiles.map(file => {    
+          let src= file.querySelector('img').getAttribute("src").replace(/^\//, '');
+          let parts = src.split('/');   
+          let fileName = parts[parts.length - 1];                        
+          return {
+            imageUrl: fileName,
+            alt: file.getAttribute("alt")
+          }          
+        });
+         
+        formData.append('title', document.querySelector("#title").value);
+        formData.append('content', JSON.stringify(photos));
+        
+        fetch("/story/<%= foundStory.type %>-<%= foundStory.number %>/<%= theChapter.episode %>/edit?_method=PATCH", {
+          method: 'POST',        
+          body:formData
+        }).then((res)=>{
+          return res.json(); 
+        }) .then((data) => {
+          console.log("修改成功!",data);
+          window.location.replace('/story/<%= foundStory.type %>-<%= foundStory.number %>/edit');;  
+        })
+      })
+      
+      window.addEventListener("beforeunload",(e)=>{
+       if (!formSubmitted) {
+        e.returnValue = "系統將不會儲存您的變更";
+
+        const formData = new FormData(); 
+        formData.append('content', JSON.stringify(showphotos));
+        
+        fetch("/story/<%= foundStory.type %>-<%= foundStory.number %>/<%= theChapter.episode %>/edit?_method=PATCH", {
+        method: 'POST',
+        body:formData 
+        }).then((res)=>{
+          console.log("修改將不會儲存"); 
+        }).catch((e)=>{console.log(e)});
+      }
+
+      })
+
+    </script>
+  </body>
+</html>

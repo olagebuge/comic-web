@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <title>#<%=theChapter.episode%> <%=theChapter.title%>｜<%=foundStory.title%></title>
+    <link rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.8/css/line.css"
+    />
+
+    <style>
+      .sortable-list {
+        list-style: none;
+        background: #fff;
+        border:1px solid #a1a1a1;
+        width: 500px;
+        border-radius: 10px;
+        padding: 38px 32px 25px;       
+      }
+      .sortable-list .item {
+        border: 1px solid #ddd;
+        display: flex;
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 11px;
+        align-items: center;
+        padding: 10px 5px;
+        justify-content: space-between;
+      }
+      .item .details {
+        display: flex;
+        align-items: center;
+      }
+      .item .details img {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 20px;
+      }
+
+      .item .details span {
+        font-size: 18px;
+      }
+
+      .item i {
+        font-size: 24px;
+        color: rgb(114, 114, 114);
+      }
+      .item i:hover {
+        background: #e7e7e7;
+        border-radius: 5px;
+      }
+
+      /* :where()可以快速組合,
+選擇所有.item.dragging底下的.details及i元素 */
+      .item.dragging :where(.details, i) {
+        opacity: 0;
+      }
+
+    </style>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <main class="flex flex-col gap-5 items-center py-5">
+      <p>故事：<%=foundStory.title%></p>
+      <h1 class="text-3xl font-bold">第<%=theChapter.episode%>話｜<%=theChapter.title%></h1>
+      <!-- 漫畫內容 -->
+      <div class="w-[800px]">
+          <% if(theChapter.showphotos.length>0){%>
+
+            <% theChapter.showphotos.forEach((photo)=>{%> 
+              <img src="/<%= foundStory.author._id%>/<%=photo.imageUrl%>" alt="<%=photo.alt%>">
+            <%})%>
+            
+          <%}%> 
+      </div>      
+      <!-- 分享api -->
+      <div>
+        <button class="bg-orange-600 px-5 py-2 text-white rounded-lg">讚!</button>
+        <button class="px-5 py-2 bg-black text-white rounded-lg sharebtn">立即分享</button>        
+      </div>
+       <!-- 章節導覽 -->
+       <div class="flex items-center w-[800px]">
+        <% const previousChapter = foundChapters.find(chapter => chapter.episode === theChapter.episode - 1); %>
+        <% const nextChapter = foundChapters.find(chapter => chapter.episode === theChapter.episode + 1); %>
+        <% if(previousChapter){%>
+          <a href="/api/story/<%=foundStory.type%>-<%=foundStory.number%>/<%= previousChapter ? previousChapter.episode : '#' %>" class="border-r py-3 px-8 border-slate-400 w-1/2 block
+            <% if(theChapter.episode === 1) { %>text-gray-500<% } %>">
+            <h4 class="text-xl font-bold text-right">← 上一話</h4> 
+            <span class="text-right block">#<%= previousChapter.episode %> <%= previousChapter.title %></span>
+          </a>        
+        <%}else{%>
+          <a href="/api/story/<%=foundStory.type%>-<%=foundStory.number%>" class="border-r py-3 px-8 border-slate-400 w-1/2 block">
+            <h4 class="text-xl font-bold text-right">← 回故事首頁</h4> 
+            <span class="block text-right">這是第一話</span>
+          </a>
+          
+        <%}%>
+        
+        <% if(nextChapter){%>
+        <a href="/api/story/<%=foundStory.type%>-<%=foundStory.number%>/<%= nextChapter ? nextChapter.episode : '#' %>" class="py-3 px-8 border-l border-slate-400 w-1/2 block">
+          <h4 class="text-xl font-bold ">下一話 →</h4>
+          <span>#<%= nextChapter.episode %> <%= nextChapter.title %></span>
+        </a>
+        <%}else{%>
+        <p class="py-3 px-8 border-l border-slate-400 w-1/2 block">這是最後一話</p>
+        <%}%>
+       </div>
+       
+    </main>
+    <script>
+      const shareData = {
+        title: "<%=foundStory.title%>",
+        text: "分享這個作品!",
+        url: "http://localhost:8080/api/story/<%=foundStory.type%>-<%=foundStory.number%>/<%=theChapter.episode%>",
+      };
+
+      const sharebtn = document.querySelector(".sharebtn");
+      const resultPara = document.querySelector(".result");
+
+      // Share must be triggered by "user activation"
+      sharebtn.addEventListener("click", async () => {
+        try {
+          await navigator.share(shareData);
+        } catch (err) {
+          resultPara.textContent = `Error: ${err}`;
+        }
+      });
+    </script>
+    
+  </body>
+</html>

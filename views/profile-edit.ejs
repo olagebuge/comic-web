@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <script src="/axios/dist/axios.min.js"></script>
+    <title>編輯個人檔案</title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <section class="p-8">
+      <h1 class="text-3xl font-bold my-2">編輯個人檔案</h1>
+      
+      <%- include ("partials/message") %>
+          <form action="/profile/edit?_method=PATCH" method="POST" enctype="multipart/form-data" class="flex flex-col">
+
+            <div class="flex items-center">
+              <img
+              id="thumbnail"
+              src="<%= user.thumbnail %>"
+              alt="個人圖片"
+              class="rounded-full w-[120px] h-[120px] object-cover"
+            />
+              <label for="file" class="bg-gray-900 text-white px-3 py-2 rounded-lg ml-5 cursor-pointer">更換頭像</label>
+              <input type="file" id="file" name="file" style="display: none;" accept=".jpg, .jpeg, .png">
+            </div>
+            <div class=" my-4">
+              <label for="name">暱稱</label>
+              <input type="text" name="name" value="<%=user.name%>" class="border-2 py-1 px-2"/>
+            </div>
+            <div class=" mt-2 mb-4">
+              <label for="paramID">自訂帳號</label>
+              <input type="text" name="paramID" value="<%=user.paramID%>" class="border-2 py-1 px-2"/>
+              <p class="text-sm font-bold text-red-500">*自訂帳號不能與其他使用者重複</p>
+            </div>
+                   
+
+            <button type="submit" class="bg-orange-600 py-2 px-5 rounded-lg text-white w-[300px] font-bold">確認更改</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const thumbnail = document.querySelector('#thumbnail');
+      const fileInput = document.querySelector('#file');
+  
+      fileInput.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+  
+          if (file) {
+              const reader = new FileReader();  
+              reader.onload = function (e) {
+                thumbnail.setAttribute("src", e.target.result);
+              };
+  
+              reader.readAsDataURL(file);
+          }
+      });
+  </script>
+  </body>
+</html>

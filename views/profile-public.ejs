@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <script src="/axios/dist/axios.min.js"></script>    
+    <title><%= foundUser.name %>個人檔案頁面</title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <section class="p-8">
+      <div class="flex items-center gap-5">
+        <img
+          src="<%= foundUser.thumbnail %>"
+          alt="個人圖片"
+          class="rounded-full w-[120px] h-[120px] object-cover"
+        />
+
+        <div class="flex flex-col gap-2">
+          
+          <h1 class="text-2xl font-bold mt-2"><%= foundUser.name %>的個人檔案</h1>
+      
+        </div>
+      
+      </div>
+    
+    </section>
+
+    <section class="p-8 flex flex-col items-center gap-3">
+      <h2 class="text-3xl font-bold text-center mb-4"><%= foundUser.name %>的作品</h2>
+
+      <%- include ("partials/message") %> <% if(stories.length>0){%>
+      <div class="grid gap-x-4 gap-y-10 grid-cols-2 w-[800px]">
+        <%stories.forEach(story=>{%>
+        <a class="flex gap-3 " href="/story/<%= story.type %>-<%= story.number %>">          
+            <img
+              src="/<%= foundUser._id %>/<%= story.cover %>"
+              alt="故事封面"
+              class="object-cover w-[120px] h-[120px] rounded-xl"
+            />
+          
+          <div class="flex flex-col gap-2 justify-between">
+            <div>
+              <h3 class="text-xl font-bold"><%=story.title%></h3>
+              <p><%= story.content %></p>
+            </div>
+            <div class="flex gap-2 items-center">
+            
+                <% const isBookmarked = user.subscribedStories.includes(story._id); %>
+              
+              <form action="/story/<%= story._id%>/bookmark?_method=PATCH" method="POST">
+                <input type="hidden" name="bookmark" value="<%= isBookmarked %>">
+                <button class="<%= isBookmarked ? 'text-white bg-black' : 'text-bg-black bg-slate-300' %> rounded-lg text-sm py-2 px-3 text-center w-[80px] font-bold">
+                  <%= isBookmarked ? '已訂閱' : '訂閱' %>
+                </button>
+              </form>
+             
+              <p><%= story.subscribers.length %> 讀者</p>
+            </div>
+                    
+          </div>
+        </a>
+
+        <%})%>
+      </div>
+      <% }else{%>
+      <p class="text-base text-gray-500"><%= foundUser.name %>目前沒有任何作品T^T</p>     
+      <%}%>      
+    </section>
+   
+
+    
+  </body>
+</html>

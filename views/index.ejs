@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <title>Home</title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <div class="p-5 mb-4 bg-light rounded-3">
+      <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">一般會員登入系統</h1>
+       
+       
+      </div>
+    </div>
+    <section class="flex flex-col items-center">
+
+      <% if(stories.length > 0) { %>
+        <h1 class="text-2xl font-bold mt-2 mb-4">最近更新作品</h1>
+        <div class="flex gap-4 w-[800px]">          
+        <% stories.reverse().forEach(story => { %>
+          <a class="flex flex-col gap-1 w-[180px] border-2 items-center" href="/story/<%=story.type%>-<%=story.number%>">            
+            <img src="/<%= story.author._id%>/<%= story.cover %>" alt="故事封面" class="object-contain w-[120px] h-[120px]">  
+            <h3 class="text-xl font-bold"><%= story.title %></h3>          
+            <p><%= story.author.name%></p>
+          </a>
+        
+        <% }) %>
+      </div>
+      <% } %>
+      
+    </section>
+  </body>
+</html>

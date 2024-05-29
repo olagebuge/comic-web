@@ -1,0 +1,19 @@
+<% if (error != "") { %>
+<div class="bg-rose-300 font-bold py-3 w-[800px] text-center rounded-lg mb-4" role="alert">
+  <strong><%= error %></strong>
+</div>
+<% } %>
+
+<!--break-->
+<% if (error_msg != "") { %>
+<div class="bg-amber-200 font-bold py-3 w-[800px] text-center rounded-lg mb-4" role="alert">
+  <strong><%= error_msg %></strong>
+</div>
+<% } %>
+
+<!--break-->
+<% if (success_msg != "") { %>
+<div class="bg-green-300 font-bold py-3 w-[800px] text-center rounded-lg mb-4" role="alert">
+  <strong><%= success_msg %></strong>
+</div>
+<% } %>

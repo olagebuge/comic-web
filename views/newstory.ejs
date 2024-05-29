@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <title>新增故事</title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <main class="flex flex-col gap-5 items-center py-5">
+      <h1 class="text-3xl font-bold">新增作品</h1>
+      <form
+        action="/api/story/new"
+        method="POST"
+        class="flex flex-col gap-3 items-center"
+        enctype="multipart/form-data"
+      >
+      <%- include ("partials/message") %>
+        <div class="flex items-center justify-center w-[800px]">
+          <label for="exampleforTitle" class="text-right">標題：</label>
+          <input
+            name="title"
+            type="text"
+            id="exampleforTitle"
+            class="border-2 leading-8 order-slate-400 rounded-lg w-2/4"
+          />
+        </div>
+
+        <div class="flex justify-center w-[800px]">
+          <label for="exampleforContent" class="text-right">敘述：</label>
+          <textarea
+            id="exampleforContent"
+            aria-describedby="emailHelp"
+            name="content"
+            class="border-2 leading-8 order-slate-400 rounded-lg w-2/4"
+          ></textarea>
+        </div>
+
+        <div class="flex justify-center w-[800px]">
+          <label for="show-type" class="text-right">展示類型：</label>
+          <select name="type" id="show-type">            
+            <option value="mobile">由上到下</option>
+            <option value="book">由左到右</option>
+            <option value="painting">插圖</option>
+          </select>
+        </div>
+
+        <!-- 上傳封面圖片 -->
+        <div class="flex flex-col">
+          <input type="file" name="story"
+              id="imagefile"              
+              accept=".jpg, .jpeg, .png"
+              style="display: none;"              
+            />
+          <label id="cover-container" for="imagefile" class="border-4 cursor-pointer p-8 rounded-lg text-2xl font-bold text-zinc-400 bg-cover bg-center w-[300px] h-[200px] flex items-center justify-center">上傳故事封面</label>
+        </div>
+
+        <button
+          type="submit"
+          class="bg-orange-600 py-2 px-5 rounded-lg text-white w-[300px] font-bold"
+        >
+          新增
+        </button>
+      </form>
+    </main>
+
+    <script>
+      const coverContainer = document.querySelector('#cover-container');
+      const fileInput = document.querySelector('#imagefile');
+  
+      fileInput.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+  
+          if (file) {
+              const reader = new FileReader();  
+              reader.onload = function (e) {
+                 coverContainer.style.backgroundImage = `url('${e.target.result}')`;
+                 coverContainer.innerText ="更換圖片";
+              };
+  
+              reader.readAsDataURL(file);
+          }
+      });
+  </script>
+  </body>
+</html>

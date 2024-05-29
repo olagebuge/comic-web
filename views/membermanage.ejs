@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include ("partials/header") %>
+    <title>會員管理</title>
+  </head>
+  <body>
+    <%- include ("partials/nav") %>
+    <section class="p-5 flex flex-col items-center gap-3">
+      <h1 class="text-3xl font-bold w-[1200px]">會員管理</h1>
+      <div class="flex w-[1200px] justify-between font-bold border-y-2 py-3 border-slate-600">
+        <div class="flex w-2/4">
+        <p class="pl-8 w-40">會員名稱</p>
+        <p class="w-24">會員身分</p>
+        <p class="w-40">會員帳號</p>
+       </div>
+        <div class="flex gap-3 w-1/4 justify-around">
+          <p>故事</p>
+          <p>被收藏</p>
+          <p>獲益</p>
+        </div>
+        <div class="flex justify-center w-1/4">      
+        <p>進階管理</p>
+      </div>
+      </div>
+      <div class="flex flex-col w-[1200px]">
+        <% if(members.length>0){ %>
+          <%members.forEach(member =>{%>
+            <% let memberStory = allChapters.find((chapter) => chapter.author == member._id); %>
+        <div
+          class="flex border-b border-slate-200 py-3 box-border gap-5 items-center justify-between"
+        >
+          <div class="flex w-2/4">
+            <h4 class="pl-8 w-40"><%= member.name %></h4>
+            <p class="font-bold w-24"><%= member.role %></p>
+            <p class="w-40"><%= member.email %></p>
+          </div>
+          <div class="flex gap-3 w-1/4 justify-around text-center">
+            
+            <p><%= memberStory ? memberStory.length : 0 %></p>
+            <p>0</p>
+            <p>0</p>
+          </div>
+          <div class="flex gap-3 w-1/4 justify-center">           
+            <button class="bg-orange-600 px-5 py-2 text-white rounded-lg">
+              移除
+            </button>
+            <button class="bg-yellow-600 px-5 py-2 text-white rounded-lg">
+              暫停權限
+            </button>
+          </div>
+        </div>
+        <%})}%>
+      </div>
+    </section>
+  </body>
+</html>
