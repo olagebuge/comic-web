@@ -1,5 +1,6 @@
 # 基本不要上傳
 .env
+.gitignore
 node_modules
 
 # 忽略所有 public 目錄下的內容
@@ -8,3 +9,4 @@ public/*
 # 但保留 public/images 目錄及其內容
 !public/images
 !public/images/*
+
