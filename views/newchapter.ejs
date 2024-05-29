@@ -64,7 +64,7 @@
     <main class="flex flex-col gap-5 items-center py-5">
       <h1 class="text-3xl font-bold"><%=foundStory.title%> | 新增章節</h1>
       <form
-        action="/api/story/<%=foundStory._id%>/newchapter"
+        action="/story/<%=foundStory._id%>/newchapter"
         method="POST"
         class="flex flex-col gap-3 items-center"
         enctype="multipart/form-data"
@@ -240,7 +240,7 @@
           const title = document.getElementById('title').value;
           formData.append('title', title);
 
-          fetch('/api/story/<%=foundStory.type%>-<%=foundStory.number%>/newchapter', {
+          fetch('/story/<%=foundStory.type%>-<%=foundStory.number%>/newchapter', {
             method: 'POST',
             body: formData
           })

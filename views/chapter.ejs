@@ -84,13 +84,13 @@
         <% const previousChapter = foundChapters.find(chapter => chapter.episode === theChapter.episode - 1); %>
         <% const nextChapter = foundChapters.find(chapter => chapter.episode === theChapter.episode + 1); %>
         <% if(previousChapter){%>
-          <a href="/api/story/<%=foundStory.type%>-<%=foundStory.number%>/<%= previousChapter ? previousChapter.episode : '#' %>" class="border-r py-3 px-8 border-slate-400 w-1/2 block
+          <a href="/story/<%=foundStory.type%>-<%=foundStory.number%>/<%= previousChapter ? previousChapter.episode : '#' %>" class="border-r py-3 px-8 border-slate-400 w-1/2 block
             <% if(theChapter.episode === 1) { %>text-gray-500<% } %>">
             <h4 class="text-xl font-bold text-right">← 上一話</h4> 
             <span class="text-right block">#<%= previousChapter.episode %> <%= previousChapter.title %></span>
           </a>        
         <%}else{%>
-          <a href="/api/story/<%=foundStory.type%>-<%=foundStory.number%>" class="border-r py-3 px-8 border-slate-400 w-1/2 block">
+          <a href="/story/<%=foundStory.type%>-<%=foundStory.number%>" class="border-r py-3 px-8 border-slate-400 w-1/2 block">
             <h4 class="text-xl font-bold text-right">← 回故事首頁</h4> 
             <span class="block text-right">這是第一話</span>
           </a>
@@ -98,7 +98,7 @@
         <%}%>
         
         <% if(nextChapter){%>
-        <a href="/api/story/<%=foundStory.type%>-<%=foundStory.number%>/<%= nextChapter ? nextChapter.episode : '#' %>" class="py-3 px-8 border-l border-slate-400 w-1/2 block">
+        <a href="/story/<%=foundStory.type%>-<%=foundStory.number%>/<%= nextChapter ? nextChapter.episode : '#' %>" class="py-3 px-8 border-l border-slate-400 w-1/2 block">
           <h4 class="text-xl font-bold ">下一話 →</h4>
           <span>#<%= nextChapter.episode %> <%= nextChapter.title %></span>
         </a>
@@ -112,7 +112,7 @@
       const shareData = {
         title: "<%=foundStory.title%>",
         text: "分享這個作品!",
-        url: "http://localhost:8080/api/story/<%=foundStory.type%>-<%=foundStory.number%>/<%=theChapter.episode%>",
+        url: "http://localhost:8080/story/<%=foundStory.type%>-<%=foundStory.number%>/<%=theChapter.episode%>",
       };
 
       const sharebtn = document.querySelector(".sharebtn");

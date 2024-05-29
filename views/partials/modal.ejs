@@ -40,7 +40,7 @@
   onShelfBtns.forEach((onShelfBtn) => {
     onShelfBtn.addEventListener("click", function () {
       const id = onShelfBtn.dataset.id;
-      form.setAttribute("action",`/api/story/${id}/changeshelf?_method=PATCH`);
+      form.setAttribute("action",`/story/${id}/changeshelf?_method=PATCH`);
      
       modal.querySelector("h4").innerText = "確定要上架嗎？";
       modal.style.display = "block";
@@ -55,7 +55,7 @@
   offShelfBtns.forEach((offShelfBtn) => {
     offShelfBtn.addEventListener("click", function (e) {
       const id = e.target.dataset.id;
-      form.setAttribute("action",`/api/story/${id}/changeshelf?_method=PATCH`);
+      form.setAttribute("action",`/story/${id}/changeshelf?_method=PATCH`);
       
       modal.querySelector("h4").innerText = "確定要下架嗎？";
       modal.style.display = "block";
